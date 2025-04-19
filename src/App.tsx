@@ -12,6 +12,11 @@ import Mentors from "./pages/Mentors";
 import Resources from "./pages/Resources";
 import SubmitPitch from "./pages/SubmitPitch";
 import NotFound from "./pages/NotFound";
+import MentorDashboard from "./pages/mentor/MentorDashboard";
+import MentorPitches from "./pages/mentor/MentorPitches";
+import MentorFeedback from "./pages/mentor/MentorFeedback";
+import MentorSchedule from "./pages/mentor/MentorSchedule";
+import MentorSettings from "./pages/mentor/MentorSettings";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +35,15 @@ const App = () => (
             <Route path="/mentors" element={<Mentors />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/submit-pitch" element={<SubmitPitch />} />
+            
+            {/* Mentor Routes */}
+            <Route path="/mentor">
+              <Route index element={<MentorDashboard />} />
+              <Route path="pitches" element={<MentorPitches />} />
+              <Route path="feedback" element={<MentorFeedback />} />
+              <Route path="schedule" element={<MentorSchedule />} />
+              <Route path="settings" element={<MentorSettings />} />
+            </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
