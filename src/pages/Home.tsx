@@ -2,8 +2,39 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon, BarChart4Icon, MessageCircleIcon, UserIcon, LightbulbIcon, TrendingUpIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 const Home = () => {
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const userId = user.uid;
+      const name = user.displayName;
+
+      // Send user data to backend
+      axios
+        .post("http://localhost:5000/api/create", {
+          userId,
+          name,
+        })
+        .then((res) => {
+          console.log("User created or already exists:", res.data);
+        })
+        .catch((err) => {
+          if (err.response?.status === 409) {
+            console.log("User already exists");
+          } else {
+            console.error("Error creating user:", err);
+          }
+        });
+    }
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -27,6 +58,15 @@ const Home = () => {
                 </Button>
                 <Button variant="outline" size="lg">
                   <Link to="/mentors">Find Mentors</Link>
+                </Button>
+
+              </div>
+              <div className="pt-10">
+                <p className="text-2xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-4xl/none text-launchpad-900">Fuel the fire of innovation!</p>
+                <Button className="bg-launchpad-600 hover:bg-launchpad-700 mt-5" size="lg">
+                  <Link to="/pitches" className="flex items-center gap-1">
+                    Become a mentor <ArrowRightIcon className="ml-2 h-4 w-4" />
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -118,7 +158,7 @@ const Home = () => {
                 </div>
               </div>
               <p className="text-muted-foreground">
-                "LaunchPad helped us refine our pitch and connect with mentors who understood our industry. We secured $2M in seed funding within 3 months of joining the platform."
+                "PitchPilot helped us refine our pitch and connect with mentors who understood our industry. We secured $2M in seed funding within 3 months of joining the platform."
               </p>
               <div className="flex items-center gap-1">
                 <TrendingUpIcon className="h-4 w-4 text-green-500" />
@@ -156,7 +196,7 @@ const Home = () => {
                 Ready to Launch Your Startup?
               </h2>
               <p className="max-w-[900px] text-launchpad-100 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Join thousands of founders who are pitching, connecting, and growing with LaunchPad
+                Join thousands of founders who are pitching, connecting, and growing with PitchPilot
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row mt-6">
@@ -164,9 +204,6 @@ const Home = () => {
                 <Link to="/pitches" className="flex items-center gap-1">
                   Get Started <ArrowRightIcon className="ml-2 h-4 w-4" />
                 </Link>
-              </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-launchpad-700" size="lg">
-                <Link to="/about">Learn More</Link>
               </Button>
             </div>
           </div>

@@ -1,16 +1,19 @@
 
 import { Link } from "react-router-dom";
 import { RocketIcon, TwitterIcon, LinkedinIcon, FacebookIcon } from "lucide-react";
+import { PlaneIcon } from "lucide-react";
 
 const Footer = () => {
   return (
     <footer className="border-t bg-white py-12">
       <div className="container grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <RocketIcon className="h-5 w-5 text-launchpad-600" />
-            <span className="text-lg font-bold text-launchpad-800">LaunchPad</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <PlaneIcon className="h-6 w-6 text-launchpad-600" />
+          <Link to="/" className="text-xl font-bold text-launchpad-800">
+            PitchPilot
+          </Link>
+        </div>
           <p className="text-sm text-muted-foreground">
             Helping startups pitch, connect, and grow
           </p>
