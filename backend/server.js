@@ -4,8 +4,9 @@ const dotenv = require("dotenv");
 const sample=require("./routes/testroute");
 const user=require("./routes/userRoute");
 const pitch = require("./routes/pitchRoute")
-
+const getpitch = require("./routes/getpitchesRoute")
 const cors = require("cors")
+
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ connectDB();
 app.use("/api",sample);
 app.use("/api",user);
 app.use("/api",pitch);
+app.use("/api",getpitch);
 
 
 
