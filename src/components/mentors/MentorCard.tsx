@@ -1,13 +1,15 @@
-
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { StarIcon, MessageCircleIcon, BriefcaseIcon } from "lucide-react";
+import { getAuth } from "firebase/auth";
+import axios from "axios";
 
 interface MentorCardProps {
   mentor: {
-    id: string;
+    _id: string; // MongoDB id
     name: string;
     role: string;
     company: string;
@@ -20,6 +22,36 @@ interface MentorCardProps {
 }
 
 const MentorCard = ({ mentor }: MentorCardProps) => {
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setUserId(user.uid);
+    }
+  }, []);
+
+  const handleRequestFeedback = async () => {
+    if (!userId) {
+      alert("You must be logged in to request feedback.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/request-feedback", {
+        userId,
+      });
+
+      if (response.status === 200) {
+        alert("Feedback request sent successfully!");
+      }
+    } catch (error) {
+      console.error("Error sending request:", error);
+      alert("Failed to send request. Please try again.");
+    }
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
@@ -37,23 +69,36 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             <div className="flex items-center mt-1 text-sm">
               <StarIcon className="h-4 w-4 text-yellow-500 mr-1 fill-yellow-500" />
               <span className="font-medium">{mentor.rating}</span>
-              <span className="text-muted-foreground ml-1">({mentor.reviewCount} reviews)</span>
+              <span className="text-muted-foreground ml-1">
+                ({mentor.reviewCount} reviews)
+              </span>
             </div>
           </div>
         </div>
       </CardHeader>
+
       <CardContent className="pb-4">
         <div className="flex flex-wrap gap-2 mb-4">
           {mentor.expertise.map((skill, i) => (
-            <Badge key={i} variant="secondary">{skill}</Badge>
+            <Badge key={i} variant="secondary">
+              {skill}
+            </Badge>
           ))}
         </div>
         <p className="text-sm text-muted-foreground">{mentor.bio}</p>
       </CardContent>
+
       <CardFooter className="border-t pt-4 flex justify-end gap-2">
-        <Button variant="outline" size="sm">View Profile</Button>
-        <Button className="bg-launchpad-600 hover:bg-launchpad-700" size="sm">
-          <MessageCircleIcon className="h-4 w-4 mr-2" /> Request Feedback
+        <Button variant="outline" size="sm">
+          View Profile
+        </Button>
+        <Button
+          className="bg-launchpad-600 hover:bg-launchpad-700"
+          size="sm"
+          onClick={handleRequestFeedback}
+        >
+          <MessageCircleIcon className="h-4 w-4 mr-2" />
+          Request Feedback
         </Button>
       </CardFooter>
     </Card>
