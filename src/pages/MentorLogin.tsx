@@ -11,16 +11,38 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "@/store/useAuthStore"; // adjust path as per your structure
+ 
+
 
 const MentorLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
+  const { setToken } = useAuthStore();
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement actual login logic
-    console.log("Email:", email, "Password:", password);
-  };
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const res = await axios.post("http://localhost:5000/api/mentor-login", {
+      email,
+      password,
+    });
+
+    const token = res.data.token;
+    setToken(token); // save to Zustand store
+    localStorage.setItem("mentorToken", token); 
+
+    // Redirect to mentor dashboard
+    navigate("/mentorDashboard");
+  } catch (err: any) {
+    alert(err.response?.data?.message || "Login failed");
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-launchpad-50 to-blue-50">

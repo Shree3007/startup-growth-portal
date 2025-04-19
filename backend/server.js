@@ -9,6 +9,7 @@ const mentor = require("./routes/mentorRoute");
 const userPitches= require("./routes/userpitchesRoute");
 const reviewRequest = require("./routes/reviewRequestRoute")
 const cors = require("cors")
+const mentorAuthRoutes = require('./routes/mentorAuth');
 
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use("/api",getpitch);
 app.use("/api",mentor);
 app.use("/api",userPitches);
 app.use("/api",reviewRequest);
+app.use('/api', mentorAuthRoutes);
 
 
 
