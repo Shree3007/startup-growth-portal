@@ -6,6 +6,7 @@ import { SearchIcon, FilterIcon, SlidersIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import MentorCard from "@/components/mentors/MentorCard";
 import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 const expertiseAreas = [
   "SaaS", "Growth Strategy", "Fundraising", "E-commerce", "FinTech", 
@@ -18,6 +19,10 @@ const Mentors = () => {
   const [mentorsData, setMentorsData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
+
+
+  
+
 
   useEffect(() => {
     const fetchMentors = async () => {
