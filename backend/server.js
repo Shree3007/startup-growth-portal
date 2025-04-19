@@ -7,6 +7,7 @@ const pitch = require("./routes/pitchRoute");
 const getpitch = require("./routes/getpitchesRoute");
 const mentor = require("./routes/mentorRoute");
 const userPitches= require("./routes/userpitchesRoute");
+const reviewRequest = require("./routes/reviewRequestRoute")
 const cors = require("cors")
 
 
@@ -26,6 +27,7 @@ app.use("/api",pitch);
 app.use("/api",getpitch);
 app.use("/api",mentor);
 app.use("/api",userPitches);
+app.use("/api",reviewRequest);
 
 
 
