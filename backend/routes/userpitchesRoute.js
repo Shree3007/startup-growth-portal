@@ -14,7 +14,7 @@ router.post("/user-pitches", async (req, res) => {
 
     const userObjectId = user._id;
 
-    const userPitches = await Pitch.find({ userId: userObjectId }).select("title");
+    const userPitches = await Pitch.find({ userId: userObjectId }).select("title _id");
     res.status(200).json(userPitches);
   } catch (err) {
     console.error(err);
