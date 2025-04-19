@@ -6,10 +6,13 @@ import { auth } from "../../firebase";
 import { Button } from "@/components/ui/button";
 import { RocketIcon, PlusIcon } from "lucide-react";
 import { PlaneIcon } from "lucide-react";
+import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 const Navbar = () => {
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -67,33 +70,33 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           {!user ? (
             <>
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden md:flex"
-              asChild
-            >
-              <Link to="/mentorLogin">Login as Mentor</Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden md:flex"
-              asChild
-            >
-              <Link to="/login">Sign In</Link>
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex"
+                asChild
+              >
+                <Link to="/mentorLogin">Login as Mentor</Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex"
+                asChild
+              >
+                <Link to="/login">Sign In</Link>
+              </Button>
             </>
           ) : (
             <>
               <Button
-              variant="outline"
-              size="sm"
-              className="hidden md:flex"
-              asChild
-            >
-              <Link to="/mentorLogin">Login as Mentor</Link>
-            </Button>
+                variant="outline"
+                size="sm"
+                className="hidden md:flex"
+                asChild
+              >
+                <Link to="/mentorLogin">Login as Mentor</Link>
+              </Button>
               <Button
                 onClick={handleLogout}
                 variant="outline"
