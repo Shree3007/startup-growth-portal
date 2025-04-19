@@ -77,9 +77,9 @@ const Mentors = () => {
           <Button variant="outline" className="flex gap-2 whitespace-nowrap">
             <FilterIcon className="h-4 w-4" /> Filters
           </Button>
-          <Button className="bg-launchpad-600 hover:bg-launchpad-700 whitespace-nowrap">
+          {/* <Button className="bg-launchpad-600 hover:bg-launchpad-700 whitespace-nowrap">
             Request Feedback
-          </Button>
+          </Button> */}
         </div>
       </div>
 
