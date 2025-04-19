@@ -57,34 +57,42 @@ const Navbar = () => {
 
 
           {token ? (
-              ""
+              <>
+              <Link
+            to="/mentorDashboard"
+            className="text-sm font-medium hover:text-launchpad-600 transition-colors"
+          >
+            Dashboard
+          </Link>
+              </>
       ) : (
+        <>
         <Link
             to="/mentors"
             className="text-sm font-medium hover:text-launchpad-600 transition-colors"
           >
             Mentors
           </Link>
-      )}
-
-          
           <Link
+          to="/resources"
+          className="text-sm font-medium hover:text-launchpad-600 transition-colors"
+        >
+          Resources
+        </Link>
+        <Link
             to="/dashboard"
             className="text-sm font-medium hover:text-launchpad-600 transition-colors"
           >
             Dashboard
           </Link>
-          <Link
-            to="/resources"
-            className="text-sm font-medium hover:text-launchpad-600 transition-colors"
-          >
-            Resources
-          </Link>
+        </>
+      )}
+
         </nav>
 
         {/* Right side */}
         <div className="flex items-center gap-2">
-          {!user ? (
+          {!user && !token ? (
             <>
               <Button
                 variant="outline"
@@ -105,14 +113,14 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Button
+              {/* <Button
                 variant="outline"
                 size="sm"
                 className="hidden md:flex"
                 asChild
               >
                 <Link to="/mentorLogin">Login as Mentor</Link>
-              </Button>
+              </Button> */}
               <Button
                 onClick={handleLogout}
                 variant="outline"
@@ -124,7 +132,13 @@ const Navbar = () => {
             </>
           )}
 
-          <Button
+{!user ? (
+            <>
+              
+            </>
+          ) : (
+            <>
+               <Button
             size="sm"
             className="bg-launchpad-600 hover:bg-launchpad-700 gap-1"
             asChild
@@ -133,6 +147,9 @@ const Navbar = () => {
               <PlusIcon className="h-4 w-4" /> Submit Pitch
             </Link>
           </Button>
+            </>
+          )}
+
         </div>
       </div>
     </header>
