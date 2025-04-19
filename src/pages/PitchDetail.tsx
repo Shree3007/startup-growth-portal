@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { HeartIcon, MessageCircleIcon, ShareIcon, BookmarkIcon, PlayIcon, ThumbsUpIcon, UserIcon, BarChart4Icon, ExternalLinkIcon, FileTextIcon, PresentationIcon, EyeIcon } from "lucide-react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 // Mock data for a single pitch
 const pitchData = {
@@ -76,13 +78,25 @@ const pitchData = {
 
 const PitchDetail = () => {
   const { id } = useParams();
+  const [pitch, setPitch] = useState(null);
   const [comment, setComment] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   
-  // In a real app, we would fetch the pitch data based on the ID
-  // For now, we'll use our mock data
-  const pitch = pitchData;
+  useEffect(() => {
+    const fetchPitch = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/getpitches");
+        const selectedPitch = response.data.find(p => p._id === id);
+        setPitch(selectedPitch);
+      } catch (error) {
+        console.error("Failed to fetch pitch:", error);
+      }
+    };
+    fetchPitch();
+  }, [id]);
+
+
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -100,6 +114,8 @@ const PitchDetail = () => {
       alert("Your feedback has been submitted!");
     }
   };
+
+  if (!pitch) return <p>Loading...</p>;
 
   return (
     <div className="container py-8">
@@ -128,7 +144,7 @@ const PitchDetail = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold">{pitch.title}</h1>
-              <p className="text-muted-foreground">{pitch.company}</p>
+              <p className="text-muted-foreground">{pitch.companyName}</p>
             </div>
             <div className="flex gap-2">
               <Button 
@@ -155,15 +171,13 @@ const PitchDetail = () => {
             <Badge className="bg-launchpad-100 text-launchpad-800 hover:bg-launchpad-200">
               {pitch.category}
             </Badge>
-            <Badge variant="outline">{pitch.funding}</Badge>
-            <Badge variant="outline">{pitch.location}</Badge>
-            <Badge variant="outline">{pitch.teamSize}</Badge>
+            <Badge variant="outline">{pitch.fundingRound}</Badge>
           </div>
 
           <Tabs defaultValue="pitch">
             <TabsList>
               <TabsTrigger value="pitch">Pitch Overview</TabsTrigger>
-              <TabsTrigger value="team">Team</TabsTrigger>
+              <TabsTrigger value="comments">Comments</TabsTrigger>
               <TabsTrigger value="feedback">Mentor Feedback</TabsTrigger>
               <TabsTrigger value="materials">Materials</TabsTrigger>
             </TabsList>
@@ -171,7 +185,7 @@ const PitchDetail = () => {
               <div>
                 <h2 className="text-xl font-bold mb-3">About the Startup</h2>
                 <p className="text-muted-foreground whitespace-pre-line">
-                  {pitch.longDescription || pitch.description}
+                  {pitch.longDescription || pitch.shortDescription}
                 </p>
               </div>
               
@@ -181,7 +195,7 @@ const PitchDetail = () => {
                     <CardTitle className="text-sm font-medium">Founded</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-2xl font-bold">{pitch.foundedDate}</p>
+                    <p className="text-2xl font-bold">{pitch.fundingYear}</p>
                   </CardContent>
                 </Card>
                 <Card>
@@ -189,93 +203,26 @@ const PitchDetail = () => {
                     <CardTitle className="text-sm font-medium">Funding Raised</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-2xl font-bold">{pitch.fundingAmount}</p>
+                    <p className="text-2xl font-bold">${pitch.fundingAmount}</p>
                   </CardContent>
                 </Card>
               </div>
             </TabsContent>
-            <TabsContent value="team" className="py-4">
-              <h2 className="text-xl font-bold mb-6">Meet the Team</h2>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <Avatar className="h-20 w-20">
-                    <AvatarImage src={pitch.founder.avatar} alt={pitch.founder.name} />
-                    <AvatarFallback>{pitch.founder.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="text-lg font-semibold">{pitch.founder.name}</h3>
-                    <p className="text-muted-foreground">{pitch.founder.title}</p>
-                    <p className="mt-2">{pitch.founder.bio}</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                  {pitch.team.map((member, index) => (
-                    <div key={index} className="flex items-center gap-4">
-                      <Avatar>
-                        <AvatarImage src={member.avatar} alt={member.name} />
-                        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h3 className="font-medium">{member.name}</h3>
-                        <p className="text-sm text-muted-foreground">{member.title}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <TabsContent value="comment" className="py-4">
+              
+
+
+
+
+
             </TabsContent>
             <TabsContent value="feedback" className="py-4">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold">Mentor Feedback</h2>
-                <Badge className="bg-launchpad-100 text-launchpad-800">
-                  {pitch.feedback.length} Comments
-                </Badge>
-              </div>
               
-              <div className="space-y-6 mb-8">
-                {pitch.feedback.map((item) => (
-                  <div key={item.id} className="flex gap-4 pb-6 border-b">
-                    <Avatar>
-                      <AvatarImage src={item.user.avatar} alt={item.user.name} />
-                      <AvatarFallback>{item.user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium">{item.user.name}</span>
-                        {item.isVerified && (
-                          <Badge variant="outline" className="text-xs py-0 h-5">
-                            {item.user.role}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-muted-foreground text-sm mb-2">{item.date}</p>
-                      <p>{item.comment}</p>
-                      <div className="flex gap-4 mt-3">
-                        <button className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
-                          <ThumbsUpIcon className="h-3 w-3" /> Helpful
-                        </button>
-                        <button className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
-                          Reply
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="font-medium">Add Your Feedback</h3>
-                <Textarea 
-                  placeholder="Share your thoughts or ask questions about this pitch..." 
-                  className="min-h-[120px]"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                />
-                <Button onClick={handleComment} className="bg-launchpad-600 hover:bg-launchpad-700">
-                  Submit Feedback
-                </Button>
-              </div>
+
+
+
+
+
             </TabsContent>
             <TabsContent value="materials" className="py-4">
               <h2 className="text-xl font-bold mb-6">Pitch Materials</h2>
@@ -294,9 +241,9 @@ const PitchDetail = () => {
                     </p>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline" className="w-full" size="sm">
+                    <Link to={pitch.pitchDeckLink}><Button variant="outline" className="w-full" size="sm">
                       <FileTextIcon className="h-4 w-4 mr-2" /> View Deck
-                    </Button>
+                    </Button></Link>
                   </CardFooter>
                 </Card>
                 
