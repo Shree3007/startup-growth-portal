@@ -37,9 +37,8 @@ interface MentorCardProps {
 
 const MentorCard = ({ mentor }: MentorCardProps) => {
   const [userId, setUserId] = useState<string | null>(null);
-  const [pitches, setPitches] = useState<{ title: string }[]>([]);
+  const [pitches, setPitches] = useState<{ title: string; _id: string }[]>([]);
   const [showModal, setShowModal] = useState(false);
-
 
   useEffect(() => {
     const auth = getAuth();
@@ -48,34 +47,52 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
         setUserId(user.uid);
       }
     });
-  
-    return () => unsubscribe(); // Clean up the listener on unmount
+
+    return () => unsubscribe();
   }, []);
 
   const handleRequestFeedback = async () => {
-    // if (!userId) {
-    //   alert("You must be logged in to request feedback.");
-    //   return;
-    // }
-
     try {
       const response = await axios.post("http://localhost:5000/api/user-pitches", {
         userId,
       });
 
       if (response.status === 200) {
-        setPitches(response.data);
+        setPitches(response.data); // assuming response.data = array of { title, _id }
         setShowModal(true);
       }
     } catch (error) {
       console.error("Error sending request:", error);
-      alert("Failed to send request. Please try again.");
+      alert("Failed to fetch pitches. Please try again.");
+    }
+  };
+
+  const handlePitchSelect = async (pitchId: string) => {
+    if (!userId) {
+      alert("You must be logged in to request feedback.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/request-feedback", {
+        pitchId,
+        mentorId: mentor._id,
+        userId,
+      });
+
+      if (response.status === 200) {
+        alert("Feedback request sent successfully!");
+        setShowModal(false); // Close modal after success
+      }
+    } catch (error) {
+      console.error("Error sending feedback request:", error);
+      alert("Failed to send feedback request. Please try again.");
     }
   };
 
   return (
     <div className="relative">
-      {/* Main Card with optional blur */}
+      {/* Main Card */}
       <div className={`${showModal ? "blur-sm pointer-events-none" : ""}`}>
         <Card className="overflow-hidden hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
@@ -142,7 +159,11 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             {pitches.length > 0 ? (
               <ul className="space-y-2">
                 {pitches.map((pitch, i) => (
-                  <li key={i} className="text-sm border-b py-1">
+                  <li
+                    key={i}
+                    className="text-sm border-b py-2 px-2 hover:bg-gray-100 cursor-pointer rounded"
+                    onClick={() => handlePitchSelect(pitch._id)}
+                  >
                     {pitch.title}
                   </li>
                 ))}

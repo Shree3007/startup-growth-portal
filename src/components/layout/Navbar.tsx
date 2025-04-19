@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth } from "../../firebase";
+import useAuthStore from "@/store/useAuthStore";
+
 
 import { Button } from "@/components/ui/button";
 import { RocketIcon, PlusIcon } from "lucide-react";
@@ -13,6 +15,10 @@ const Navbar = () => {
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
+   const { setToken } = useAuthStore();
+
+  const token = useAuthStore((state) => state.token);
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -23,7 +29,9 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = async () => {
+    setToken("");
     await signOut(auth);
+
     navigate("/"); // Redirect to home after logout
   };
 
@@ -46,12 +54,20 @@ const Navbar = () => {
           >
             Explore Pitches
           </Link>
-          <Link
+
+
+          {token ? (
+              ""
+      ) : (
+        <Link
             to="/mentors"
             className="text-sm font-medium hover:text-launchpad-600 transition-colors"
           >
             Mentors
           </Link>
+      )}
+
+          
           <Link
             to="/dashboard"
             className="text-sm font-medium hover:text-launchpad-600 transition-colors"

@@ -5,10 +5,17 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import { getAuth } from "firebase/auth";
+import useAuthStore from "@/store/useAuthStore";
+import { log } from "console";
+
 
 const Home = () => {
 
+  const token = useAuthStore((state) => state.token);
+  
+
   useEffect(() => {
+
     const auth = getAuth();
     const user = auth.currentUser;
 
