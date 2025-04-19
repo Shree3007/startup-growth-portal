@@ -1,10 +1,8 @@
-
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/multer");
 const Pitch = require("../models/pitch");
-
-
+const User = require("../models/user"); 
 
 router.post("/pitch", upload.single("pitchDeck"), async (req, res) => {
   try {
@@ -17,15 +15,21 @@ router.post("/pitch", upload.single("pitchDeck"), async (req, res) => {
       fundingYear,
       shortDescription,
       longDescription,
-      userId,
+      userId: userStringId, 
       coverImage,
       pitchDeckLink,
     } = req.body;
 
+    
+    const user = await User.findOne({ userId: userStringId });
 
-    // Save pitch to MongoDB
+    if (!user) {
+      return res.status(404).json({ message: "User not found with this userId" });
+    }
+
+    
     const newPitch = new Pitch({
-      userId,
+      userId: user._id, 
       title,
       companyName,
       category,
