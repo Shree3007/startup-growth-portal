@@ -8,8 +8,10 @@ const getpitch = require("./routes/getpitchesRoute");
 const mentor = require("./routes/mentorRoute");
 const userPitches= require("./routes/userpitchesRoute");
 const reviewRequest = require("./routes/reviewRequestRoute")
-const cors = require("cors")
+const pending = require("./routes/pendingrequest");
+const getcomments = require("./routes/getCommentRoute");
 const mentorAuthRoutes = require('./routes/mentorAuth');
+const cors = require("cors")
 
 
 dotenv.config();
@@ -30,6 +32,9 @@ app.use("/api",mentor);
 app.use("/api",userPitches);
 app.use("/api",reviewRequest);
 app.use('/api', mentorAuthRoutes);
+app.use("/api",pending);
+app.use("/api",getcomments);
+
 
 
 
