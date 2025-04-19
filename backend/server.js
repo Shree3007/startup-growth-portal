@@ -3,9 +3,10 @@ const connectDB= require("./config/db");
 const dotenv = require("dotenv");
 const sample=require("./routes/testroute");
 const user=require("./routes/userRoute");
-const pitch = require("./routes/pitchRoute")
-const getpitch = require("./routes/getpitchesRoute")
-const mentor = require("./routes/mentorRoute")
+const pitch = require("./routes/pitchRoute");
+const getpitch = require("./routes/getpitchesRoute");
+const mentor = require("./routes/mentorRoute");
+const userPitches= require("./routes/userpitchesRoute");
 const cors = require("cors")
 
 
@@ -24,6 +25,7 @@ app.use("/api",user);
 app.use("/api",pitch);
 app.use("/api",getpitch);
 app.use("/api",mentor);
+app.use("/api",userPitches);
 
 
 
