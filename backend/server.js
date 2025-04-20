@@ -13,6 +13,8 @@ const mentorAuthRoutes = require('./routes/mentorAuth');
 const patchMessage = require("./routes/patchMessageRoute")
 const getAllRequest = require('./routes/getAllRequestsRoute');
 const decisionRoute = require("./routes/decisionRoute");
+const getFeedbackRoute = require("./routes/getFeedbackRoute");
+const patchFeedbackRoute= require("./routes/patchFeedbackRoute");
 const cors = require("cors")
 
 
@@ -40,6 +42,7 @@ app.use("/api",getcomments);
 app.use("/api",patchMessage);
 app.use("/api", getAllRequest);
 app.use("/api", decisionRoute);
+app.use("/api",getFeedbackRoute);
 
 
 app.listen(process.env.PORT || 5000, () => {
