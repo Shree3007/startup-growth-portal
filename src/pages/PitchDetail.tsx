@@ -33,7 +33,6 @@ import { getAuth } from "firebase/auth";
 import useAuthStore from "@/store/useAuthStore";
 
 const PitchDetail = () => {
-
   const { token } = useAuthStore();
   const { id } = useParams();
   const [pitch, setPitch] = useState(null);
@@ -42,6 +41,9 @@ const PitchDetail = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [comments, setComments] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState([]);
+  const [loadingFeedback, setLoadingFeedback] = useState(true);
+  const [feedbackText, setFeedbackText] = useState("");
 
   useEffect(() => {
     const fetchPitch = async () => {
@@ -83,7 +85,6 @@ const PitchDetail = () => {
       alert("Comment submitted!");
       setCommentText("");
       await handleComment(); // <-- Re-fetch comments from backend
-
     } catch (error) {
       console.error("Error submitting comment:", error);
       alert("Something went wrong!");
@@ -91,6 +92,30 @@ const PitchDetail = () => {
       setSubmitting(false);
     }
   };
+
+
+  const handleFeedbackSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setSubmitting(true);
+      await axios.patch("http://localhost:5000/api/pitches/comment", {
+        id,
+        feedbackText,
+      });
+
+      alert("Feedback submitted!");
+      setFeedbackText("");
+      await fetchFeedback(); // <-- Re-fetch comments from backend
+    } catch (error) {
+      console.error("Error submitting Feedback:", error);
+      alert("Something went wrong!");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -108,6 +133,25 @@ const PitchDetail = () => {
       setComments(response.data);
     } catch (error) {
       console.error("Error fetching comments:", error);
+    }
+  };
+
+  useEffect(() => {
+    handleComment();
+    fetchFeedback(); // ⬅️ fetch mentor feedback
+  }, [id]);
+
+  const fetchFeedback = async () => {
+    try {
+      setLoadingFeedback(true);
+      const response = await axios.get(
+        `http://localhost:5000/api/feedback/${id}`
+      );
+      setFeedback(response.data);
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    } finally {
+      setLoadingFeedback(false);
     }
   };
 
@@ -184,7 +228,7 @@ const PitchDetail = () => {
               <TabsTrigger onClick={handleComment} value="comments">
                 Comments
               </TabsTrigger>
-              <TabsTrigger value="feedback">Mentor Feedback</TabsTrigger>
+              <TabsTrigger onClick={fetchFeedback} value="feedback">Mentor Feedback</TabsTrigger>
               <TabsTrigger value="materials">Materials</TabsTrigger>
             </TabsList>
             <TabsContent value="pitch" className="space-y-6 py-4">
@@ -221,33 +265,29 @@ const PitchDetail = () => {
             <TabsContent value="comments" className="py-4">
               <h2 className="text-xl font-bold mb-4">User Comments</h2>
 
-
-              { token ? (
+              {token ? (
                 ""
               ) : (
                 <div className="p-4 border rounded shadow mb-4">
-                <h3 className="text-lg font-semibold mb-2">Add a Comment</h3>
-                <form onSubmit={handleSubmit}>
-                  <textarea
-                    className="w-full p-2 border rounded mb-2"
-                    placeholder="Write your comment here..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    disabled={submitting}
-                  >
-                    {submitting ? "Submitting..." : "Submit Comment"}
-                  </button>
-                </form>
-              </div>
-                  
-                )}
-
-
+                  <h3 className="text-lg font-semibold mb-2">Add a Comment</h3>
+                  <form onSubmit={handleSubmit}>
+                    <textarea
+                      className="w-full p-2 border rounded mb-2"
+                      placeholder="Write your comment here..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      disabled={submitting}
+                    >
+                      {submitting ? "Submitting..." : "Submit Comment"}
+                    </button>
+                  </form>
+                </div>
+              )}
 
               {comments.length === 0 ? (
                 <p className="text-muted-foreground">No comments yet.</p>
@@ -277,7 +317,61 @@ const PitchDetail = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="feedback" className="py-4"></TabsContent>
+            <TabsContent value="feedback" className="py-4">
+              <h2 className="text-xl font-bold mb-4">Mentor Feedback</h2>
+
+              {token?(
+                <div className="p-4 border rounded shadow mb-4">
+                <h3 className="text-lg font-semibold mb-2">Add a Feedback</h3>
+                <form onSubmit={handleFeedbackSubmit}>
+                  <textarea
+                    className="w-full p-2 border rounded mb-2"
+                    placeholder="Write your comment here..."
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    disabled={submitting}
+                  >
+                    {submitting ? "Submitting..." : "Submit Comment"}
+                  </button>
+                </form>
+              </div>
+              ): ""}
+
+              {loadingFeedback ? (
+                <p>Loading feedback...</p>
+              ) : feedback.length === 0 ? (
+                <p className="text-muted-foreground">No mentor feedback yet.</p>
+              ) : (
+                feedback.map((fb, index) => (
+                  <Card key={index} className="mb-4">
+                    <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                      <Avatar>
+                        <AvatarFallback>
+                          {fb.mentorName?.[0] || "M"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <CardTitle className="text-md">
+                          {fb.mentorName}
+                        </CardTitle>
+                        <CardDescription>
+                          {new Date(fb.date).toLocaleString()}
+                        </CardDescription>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p>{fb.comment}</p>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+
             <TabsContent value="materials" className="py-4">
               <h2 className="text-xl font-bold mb-6">Pitch Materials</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
