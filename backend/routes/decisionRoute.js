@@ -2,13 +2,12 @@ const express = require("express");
 const router = express.Router();
 const ReviewRequest = require("../models/reviewRequest");
 const Pitch = require("../models/pitch");
-const verifyMentorToken = require("../middleware/verifyMentorToken");
 
 
-router.patch("/decision/:id", verifyMentorToken, async (req, res) => {
+
+router.patch("/decision/:id", async (req, res) => {
   const { id } = req.params; // reviewRequestId
-  const { action, feedback } = req.body;
-  const { id: mentorId, name: mentorName } = req.mentor; // Extracted from JWT
+  const { action } = req.body;
 
   try {
     if (!["approved", "rejected"].includes(action)) {
@@ -24,29 +23,11 @@ router.patch("/decision/:id", verifyMentorToken, async (req, res) => {
       return res.status(400).json({ message: "This request has already been processed." });
     }
 
-    if (action === "approved" && (!feedback || feedback.trim() === "")) {
-      return res.status(400).json({ message: "Feedback is required to approve a request." });
-    }
 
     // Update reviewRequest status
     reviewRequest.status = action;
     await reviewRequest.save();
 
-    // Append feedback to pitch if available
-    if (feedback && feedback.trim() !== "") {
-      await Pitch.findByIdAndUpdate(
-        reviewRequest.pitchId,
-        {
-          $push: {
-            mentorFeedback: {
-              mentorId,
-              mentorName,
-              comment: feedback.trim(),
-            },
-          },
-        }
-      );
-    }
 
     res.status(200).json({
       message: `Request ${action} successfully.`,

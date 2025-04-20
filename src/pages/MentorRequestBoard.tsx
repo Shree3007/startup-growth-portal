@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMentorRequests } from "@/api/getMentorRequests";
 import useAuthStore from "@/store/useAuthStore";
+import axios from "axios";
 import {
   Tabs,
   TabsList,
@@ -33,6 +34,31 @@ const MentorRequestBoardTabs = () => {
     fetchRequests();
   }, [token]);
 
+  const handleDecision = async (requestId, action) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:5000/api/decision/${requestId}`,
+        { action },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = response.data;
+      console.log("Success:", result);
+
+      setRequests((prev) =>
+        prev.map((req) =>
+          req._id === requestId ? { ...req, status: result.status } : req
+        )
+      );
+    } catch (error) {
+      console.error("Error updating request status:", error);
+    }
+  };
+
   const renderRequests = (status) => {
     const filtered = requests.filter((req) => req.status === status);
 
@@ -45,16 +71,39 @@ const MentorRequestBoardTabs = () => {
       const user = req.userId;
 
       return (
-        <Card key={req._id} className="mb-4 cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader
-            onClick={() => navigate(`/pitches/${pitch?._id}`)}
-            className="hover:underline text-blue-600"
-          >
-            <CardTitle>{pitch?.title || "Untitled Pitch"}</CardTitle>
+        <Card key={req._id} className="mb-4 hover:shadow-md transition-shadow">
+          <CardHeader className="flex justify-between items-center">
+            <div
+              onClick={() => navigate(`/pitches/${pitch?._id}`)}
+              className="hover:underline text-blue-600 cursor-pointer"
+            >
+              <CardTitle>{pitch?.title || "Untitled Pitch"}</CardTitle>
+            </div>
+            {status === "pending" && (
+              <div className="space-x-2">
+                <button
+                  onClick={() => handleDecision(req._id, "approved")}
+                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => handleDecision(req._id, "rejected")}
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
-            <p><strong>From:</strong> {user?.name || "Unknown"}</p>
-            <p><strong>Requested At:</strong> {new Date(req.requestedAt).toLocaleString()}</p>
+            <p>
+              <strong>From:</strong> {user?.name || "Unknown"}
+            </p>
+            <p>
+              <strong>Requested At:</strong>{" "}
+              {new Date(req.requestedAt).toLocaleString()}
+            </p>
           </CardContent>
         </Card>
       );

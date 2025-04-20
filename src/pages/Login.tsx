@@ -43,28 +43,6 @@ const Login: React.FC = () => {
           <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
         )}
         <form onSubmit={handleEmailLogin} className="grid gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-launchpad-600 hover:bg-launchpad-700 text-white py-3 rounded-xl transition duration-200"
-          >
-            Login with Email
-          </button>
           <button
             type="button"
             onClick={handleGoogleLogin}

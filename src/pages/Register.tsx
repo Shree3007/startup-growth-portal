@@ -45,28 +45,6 @@ const Register: React.FC = () => {
         )}
 
         <form onSubmit={handleEmailRegister} className="grid gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl transition duration-200"
-          >
-            Register with Email
-          </button>
           <button
             type="button"
             onClick={handleGoogleRegister}
