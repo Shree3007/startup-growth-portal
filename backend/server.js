@@ -8,13 +8,11 @@ const getpitch = require("./routes/getpitchesRoute");
 const mentor = require("./routes/mentorRoute");
 const userPitches= require("./routes/userpitchesRoute");
 const reviewRequest = require("./routes/reviewRequestRoute")
-const pending = require("./routes/pendingrequest");
 const getcomments = require("./routes/getCommentRoute");
 const mentorAuthRoutes = require('./routes/mentorAuth');
-const patchMessage =require("./routes/patchMessageRoute")
-
-
-
+const patchMessage = require("./routes/patchMessageRoute")
+const getAllRequest = require('./routes/getAllRequestsRoute');
+const decisionRoute = require("./routes/decisionRoute");
 const cors = require("cors")
 
 
@@ -38,9 +36,10 @@ app.use("/api",userPitches);
 app.use("/api",reviewRequest);
 
 app.use('/api', mentorAuthRoutes);
-app.use('/api',patchMessage)
-app.use("/api",pending);
 app.use("/api",getcomments);
+app.use("/api",patchMessage);
+app.use("/api", getAllRequest);
+app.use("/api", decisionRoute);
 
 
 app.listen(process.env.PORT || 5000, () => {
