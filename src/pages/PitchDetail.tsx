@@ -34,7 +34,7 @@ import { getAuth } from "firebase/auth";
 const PitchDetail = () => {
   const { id } = useParams();
   const [pitch, setPitch] = useState(null);
-  const [comment, setComment] = useState("");
+  const [commentText, setCommentText] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [comments, setComments] = useState([]);
@@ -74,11 +74,11 @@ const PitchDetail = () => {
         id,
         userId,
         name,
-        comment,
+        commentText,
       });
 
       alert("Comment submitted!");
-      setComment("");
+      setCommentText("");
       await handleComment(); // <-- Re-fetch comments from backend
 
     } catch (error) {
@@ -223,8 +223,8 @@ const PitchDetail = () => {
                   <textarea
                     className="w-full p-2 border rounded mb-2"
                     placeholder="Write your comment here..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
                     required
                   />
                   <button

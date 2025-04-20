@@ -7,6 +7,7 @@ import {
   Clock,
   TrendingUp,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const MentorDashboard = () => {
   return (
@@ -23,7 +24,7 @@ const MentorDashboard = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Link to='/requested-pitches'><Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Pitches</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -34,7 +35,7 @@ const MentorDashboard = () => {
               +2 new this week
             </p>
           </CardContent>
-        </Card>
+        </Card></Link>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Feedback Given</CardTitle>
