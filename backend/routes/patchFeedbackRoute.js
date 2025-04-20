@@ -1,14 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const Pitch = require("../models/pitch");
+const protectMentor = require("../middleware/protectroute"); 
 
-// PATCH: Add mentor feedback to a pitch
-router.patch("/feedback/:pitchId", async (req, res) => {
+
+router.patch("/feedback/:pitchId", protectMentor, async (req, res) => {
   const { pitchId } = req.params;
-  const { mentorId, mentorName, comment } = req.body;
+  const { comment } = req.body;
 
-  if (!mentorId || !mentorName || !comment || comment.trim() === "") {
-    return res.status(400).json({ message: "All fields are required." });
+  
+  const mentorId = req.mentor._id;
+  const mentorName = req.mentor.name;
+
+  if (!comment || comment.trim() === "") {
+    return res.status(400).json({ message: "Comment is required." });
   }
 
   try {
