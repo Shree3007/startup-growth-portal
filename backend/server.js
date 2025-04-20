@@ -43,6 +43,7 @@ app.use("/api",patchMessage);
 app.use("/api", getAllRequest);
 app.use("/api", decisionRoute);
 app.use("/api",getFeedbackRoute);
+app.use("/api",patchFeedbackRoute);
 
 
 app.listen(process.env.PORT || 5000, () => {

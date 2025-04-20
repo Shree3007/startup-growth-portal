@@ -93,20 +93,28 @@ const PitchDetail = () => {
     }
   };
 
-
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setSubmitting(true);
-      await axios.patch("http://localhost:5000/api/pitches/comment", {
-        id,
-        feedbackText,
-      });
+      await axios.patch(
+        `http://localhost:5000/api/feedback`,
+        {
+          id,
+          comment: feedbackText, 
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
 
       alert("Feedback submitted!");
       setFeedbackText("");
-      await fetchFeedback(); // <-- Re-fetch comments from backend
+      await fetchFeedback(); 
     } catch (error) {
       console.error("Error submitting Feedback:", error);
       alert("Something went wrong!");
@@ -114,8 +122,6 @@ const PitchDetail = () => {
       setSubmitting(false);
     }
   };
-
-
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -228,7 +234,9 @@ const PitchDetail = () => {
               <TabsTrigger onClick={handleComment} value="comments">
                 Comments
               </TabsTrigger>
-              <TabsTrigger onClick={fetchFeedback} value="feedback">Mentor Feedback</TabsTrigger>
+              <TabsTrigger onClick={fetchFeedback} value="feedback">
+                Mentor Feedback
+              </TabsTrigger>
               <TabsTrigger value="materials">Materials</TabsTrigger>
             </TabsList>
             <TabsContent value="pitch" className="space-y-6 py-4">
@@ -320,27 +328,29 @@ const PitchDetail = () => {
             <TabsContent value="feedback" className="py-4">
               <h2 className="text-xl font-bold mb-4">Mentor Feedback</h2>
 
-              {token?(
+              {token ? (
                 <div className="p-4 border rounded shadow mb-4">
-                <h3 className="text-lg font-semibold mb-2">Add a Feedback</h3>
-                <form onSubmit={handleFeedbackSubmit}>
-                  <textarea
-                    className="w-full p-2 border rounded mb-2"
-                    placeholder="Write your comment here..."
-                    value={feedbackText}
-                    onChange={(e) => setFeedbackText(e.target.value)}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    disabled={submitting}
-                  >
-                    {submitting ? "Submitting..." : "Submit Comment"}
-                  </button>
-                </form>
-              </div>
-              ): ""}
+                  <h3 className="text-lg font-semibold mb-2">Add a Feedback</h3>
+                  <form onSubmit={handleFeedbackSubmit}>
+                    <textarea
+                      className="w-full p-2 border rounded mb-2"
+                      placeholder="Write your comment here..."
+                      value={feedbackText}
+                      onChange={(e) => setFeedbackText(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      disabled={submitting}
+                    >
+                      {submitting ? "Submitting..." : "Submit Feedback"}
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                ""
+              )}
 
               {loadingFeedback ? (
                 <p>Loading feedback...</p>
