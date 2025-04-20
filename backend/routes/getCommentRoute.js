@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Pitch = require("../models/pitch"); // adjust the path as needed
 
-router.get("/pitches/:pitchId/comments", async (req, res) => {
+router.get("/comments/:pitchId", async (req, res) => {
   const { pitchId } = req.params;
 
   try {
