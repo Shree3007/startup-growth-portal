@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Mentor = require('../models/Mentor');
+const Mentor = require('../models/mentors');
 
 const protectMentor = async (req, res, next) => {
   const authHeader = req.headers.authorization;

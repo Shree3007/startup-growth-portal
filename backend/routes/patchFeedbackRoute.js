@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Pitch = require("../models/pitch");
-const protectMentor = require("../middleware/protectroute"); 
+const protectMentor = require("../middleware/protectMentor"); 
 
 
 router.patch("/feedback", protectMentor, async (req, res) => {
@@ -18,7 +18,7 @@ router.patch("/feedback", protectMentor, async (req, res) => {
 
   try {
     const updatedPitch = await Pitch.findByIdAndUpdate(
-      pitchId,
+      id,
       {
         $push: {
           mentorFeedback: {
