@@ -18,6 +18,7 @@ import Register from "./pages/Register"; // 👈 Import Register
 import { UserProvider } from "./context/UserContext";
 import MentorLogin from "./pages/MentorLogin";
 import MentorDashboard from "./pages/MentorDashboard";
+import MentorRequestBoard from "./pages/MentorRequestBoard";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,10 @@ const App = () => (
             <Route path="/mentors" element={<Mentors />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/submit-pitch" element={<SubmitPitch />} />
+            // In your router (React Router or Next.js based route file)
+
+            <Route path="/requested-pitches" element={<MentorRequestBoard />} />
+
             
           <Route path="/mentorDashboard" element={<MentorDashboard/>} /> {/* ✅ */}
           </Route>

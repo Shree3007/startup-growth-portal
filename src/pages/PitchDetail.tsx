@@ -30,8 +30,11 @@ import {
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { getAuth } from "firebase/auth";
+import useAuthStore from "@/store/useAuthStore";
 
 const PitchDetail = () => {
+
+  const { token } = useAuthStore();
   const { id } = useParams();
   const [pitch, setPitch] = useState(null);
   const [commentText, setCommentText] = useState("");
@@ -217,7 +220,12 @@ const PitchDetail = () => {
             </TabsContent>
             <TabsContent value="comments" className="py-4">
               <h2 className="text-xl font-bold mb-4">User Comments</h2>
-              <div className="p-4 border rounded shadow mb-4">
+
+
+              { token ? (
+                ""
+              ) : (
+                <div className="p-4 border rounded shadow mb-4">
                 <h3 className="text-lg font-semibold mb-2">Add a Comment</h3>
                 <form onSubmit={handleSubmit}>
                   <textarea
@@ -236,6 +244,11 @@ const PitchDetail = () => {
                   </button>
                 </form>
               </div>
+                  
+                )}
+
+
+
               {comments.length === 0 ? (
                 <p className="text-muted-foreground">No comments yet.</p>
               ) : (
