@@ -4,8 +4,8 @@ const Pitch = require("../models/pitch");
 const protectMentor = require("../middleware/protectroute"); 
 
 
-router.patch("/feedback/:pitchId", protectMentor, async (req, res) => {
-  const { pitchId } = req.params;
+router.patch("/feedback", protectMentor, async (req, res) => {
+  const { id } = req.body;
   const { comment } = req.body;
 
   

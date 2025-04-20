@@ -36,13 +36,13 @@ app.use("/api",getpitch);
 app.use("/api",mentor);
 app.use("/api",userPitches);
 app.use("/api",reviewRequest);
-
 app.use('/api', mentorAuthRoutes);
 app.use("/api",getcomments);
 app.use("/api",patchMessage);
 app.use("/api", getAllRequest);
 app.use("/api", decisionRoute);
 app.use("/api",getFeedbackRoute);
+app.use("/api",patchFeedbackRoute);
 
 
 app.listen(process.env.PORT || 5000, () => {
