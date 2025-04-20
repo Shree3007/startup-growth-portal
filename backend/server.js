@@ -11,7 +11,12 @@ const reviewRequest = require("./routes/reviewRequestRoute")
 const pending = require("./routes/pendingrequest");
 const getcomments = require("./routes/getCommentRoute");
 const mentorAuthRoutes = require('./routes/mentorAuth');
+const patchMessage =require("./routes/patchMessageRoute")
+
+
+
 const cors = require("cors")
+
 
 
 dotenv.config();
@@ -31,11 +36,11 @@ app.use("/api",getpitch);
 app.use("/api",mentor);
 app.use("/api",userPitches);
 app.use("/api",reviewRequest);
+
 app.use('/api', mentorAuthRoutes);
+app.use('/api',patchMessage)
 app.use("/api",pending);
 app.use("/api",getcomments);
-
-
 
 
 app.listen(process.env.PORT || 5000, () => {

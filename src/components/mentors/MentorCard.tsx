@@ -58,11 +58,11 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
       });
 
       if (response.status === 200) {
-        setPitches(response.data); // assuming response.data = array of { title, _id }
+        setPitches(response.data);
         setShowModal(true);
       }
     } catch (error) {
-      console.error("Error sending request:", error);
+      console.error("Error fetching pitches:", error);
       alert("Failed to fetch pitches. Please try again.");
     }
   };
@@ -74,15 +74,25 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/request-feedback", {
+      // Close modal first for better UX
+      setShowModal(false);
+
+      const response = await axios.post("http://localhost:5000/api/review-request", {
         pitchId,
         mentorId: mentor._id,
         userId,
       });
 
       if (response.status === 200) {
-        alert("Feedback request sent successfully!");
-        setShowModal(false); // Close modal after success
+        setTimeout(() => {
+          alert("✅ Feedback request sent successfully!");
+        }, 200); // slight delay for smooth closing
+      }
+
+      if(response.status === 409){
+        setTimeout(() => {
+          alert("Review request already submitted");
+        }, 200); 
       }
     } catch (error) {
       console.error("Error sending feedback request:", error);
@@ -148,7 +158,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[300px] max-h-[80vh] overflow-y-auto relative">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[300px] max-h-[80vh] overflow-y-auto relative z-50">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-black"
               onClick={() => setShowModal(false)}
@@ -158,10 +168,10 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             <h2 className="text-lg font-semibold mb-4">Your Pitches</h2>
             {pitches.length > 0 ? (
               <ul className="space-y-2">
-                {pitches.map((pitch, i) => (
+                {pitches.map((pitch) => (
                   <li
-                    key={i}
-                    className="text-sm border-b py-2 px-2 hover:bg-gray-100 cursor-pointer rounded"
+                    key={pitch._id}
+                    className="text-sm border rounded p-2 hover:bg-gray-100 cursor-pointer transition-colors"
                     onClick={() => handlePitchSelect(pitch._id)}
                   >
                     {pitch.title}
